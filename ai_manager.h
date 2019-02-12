@@ -22,13 +22,25 @@
 
 
 			void sort_bots(); //Uses std::sort to sort the bots
-			void kill_bots(); //Kills the weakest performing bots
+			void kill_bot(unsigned int bot_index); //Kills the weakest performing bots
+	
+			ai * breed(ai * father, ai * mother); //Returns a bot with an average of the the weights and biases of it's parents.
+
 
 		private:
 			std::vector<ai*> bots;
 			
-			ai breed(ai &father, ai &mother); //Returns a bot with an average of the the weights and biases of it's parents.
+			static bool compare_ai_pointer(ai * one, ai * two);
+			const double MUTATION_RATE = 0.01;
 			void add_number_of_bots(unsigned int bot_number);
 			void delete_number_of_bots(unsigned int bot_number);
+
+
+			void pass_input_biases(ai * father, ai * mother, ai * baby);
+			void pass_hidden_biases(unsigned int hidden_layer, ai * father, ai * mother, ai * baby);
+			void pass_output_bises(ai * father, ai * mother, ai * baby);
+			void pass_biases(ai * father, ai *mother, ai * baby);
+			ai * make_baby(ai * father, ai * mother);
+			void pass_weights(ai * father, ai * mother, ai * baby);
 		};
 #endif

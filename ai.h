@@ -17,13 +17,23 @@
 			unsigned int get_number_of_hidden_layers() const;
 			unsigned int get_number_of_hidden_nodes(unsigned int layer_number) const;
 			unsigned int get_number_of_output_nodes() const;
-
+			unsigned int get_number_of_weight_layers() const;
+			unsigned int get_number_of_weight_nodes(unsigned int weight_layer_number) const;
+			double get_output_value(unsigned int output_node) const;
 			void set_number_of_input_nodes(unsigned int new_number_of_input_nodes);
 			void set_number_of_hidden_layers(unsigned int new_number_of_hidden_layers);
 			void set_number_of_hidden_nodes(unsigned int layer_number, unsigned int new_number_of_hidden_nodes);
 			void set_number_of_output_nodes(unsigned int new_number_of_output_nodes);
 
-			
+			double get_input_bias(unsigned int input_node_number) const;
+			double get_hidden_bias(unsigned int hidden_layer_number, unsigned int hidden_node_number) const;
+			double get_output_bias(unsigned int output_node_number) const;
+
+			void set_input_bias(unsigned int input_node_number, double new_bias);
+			void set_hidden_bias(unsigned int hidden_layer_number, unsigned int hidden_node_number, double new_bias);
+			void set_output_bias(unsigned int output_node_number, double new_bias);
+
+
 			void init_weights(); //Initalizes network with new weights
 			void set_weight(unsigned int layer_number, unsigned int weight_number, double newWeight); 
 			double get_weight(unsigned int layer_number, unsigned int weight_number) const;
@@ -36,6 +46,7 @@
 			double get_error_margin() const; //Gets the overall error margin
 			void clear_error_margin();
 
+		 	unsigned int get_number_of_letters() const;
 		private:
 
 			helper help;
@@ -74,7 +85,7 @@
 
 			std::vector<std::vector<double*>> weights;
 
-			bool operator <(ai &bots);
+		
 	};
 
 #endif

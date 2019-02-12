@@ -28,6 +28,60 @@ unsigned int ai::get_number_of_output_nodes() const
 	return output_nodes.size();
 }
 
+unsigned int ai::get_number_of_weight_layers() const
+{
+	return weights.size();
+}
+unsigned int ai::get_number_of_weight_nodes(unsigned int weight_layer_number) const
+{
+	return weights.at(weight_layer_number).size();	
+}
+double ai::get_input_bias(unsigned int input_node_number) const
+{
+	return (input_nodes.at(input_node_number)->get_bias());
+}
+double ai::get_hidden_bias(unsigned int hidden_layer_number, unsigned int hidden_node_number) const
+{
+	return (hidden_nodes.at(hidden_layer_number)->at(hidden_node_number)->get_bias());
+}
+double ai::get_output_bias(unsigned int output_node_number) const
+{
+	return (output_nodes.at(output_node_number)->get_bias());
+}
+double ai::get_output_value(unsigned int output_index) const
+{
+	return output_nodes.at(output_index)->get_value();
+}
+
+unsigned int ai::get_number_of_letters() const
+{
+	return NUMBER_OF_LETTERS;
+}
+
+void ai::set_input_bias(unsigned int input_node_number, double new_bias)
+{
+	input_nodes.at(input_node_number)->set_bias(new_bias);
+	return;
+}
+void ai::set_hidden_bias(unsigned int hidden_layer_number, unsigned int hidden_node_number, double new_bias)
+{
+	hidden_nodes.at(hidden_layer_number)->at(hidden_node_number)->set_bias(new_bias);
+}
+void ai::set_output_bias(unsigned int output_node_number, double new_bias)
+{
+	output_nodes.at(output_node_number)->set_bias(new_bias);
+}
+
+double ai::get_weight(unsigned int weight_layer_number, unsigned int weight_node_number) const
+{
+	return *weights.at(weight_layer_number).at(weight_node_number);
+}
+
+void ai::set_weight(unsigned int weight_layer_number, unsigned int weight_node_number, double new_weight)
+{
+	*this->weights.at(weight_layer_number).at(weight_node_number) = new_weight;
+	return;
+}
 void ai::delete_nodes(std::vector<node*> &layer, unsigned int number_of_nodes)
 {
 	this->weights_initted = false;
@@ -289,7 +343,6 @@ void ai::get_input()
 	unsigned int word_number; 
 	word_number = help.random_int(0, this->MAX_WORD_NUMBER);
 	word_selected = this->get_word(this->input_streams.at(this->dictionary_selected), word_number);
-	std::cout << "Selected word: " << word_selected << std::endl;
 
 	for(unsigned int letter_counter = 0; letter_counter < word_selected.length(); letter_counter++)
 	{
@@ -319,8 +372,7 @@ void ai::get_input()
 	for(unsigned int counter = 0; counter < this->get_number_of_input_nodes(); counter++)
 	{
 		input_nodes.at(counter)->push_value();
-		if(input_nodes.at(counter)->get_value() != 0) 
-			std::cout << input_nodes.at(counter)->get_value() << std::endl;
+		
 	}
 
 }
@@ -443,10 +495,6 @@ unsigned int ai::get_selected() const
 }
 void ai::check_output()
 {
-	for(unsigned int output_counter = 0; output_counter < this->get_number_of_output_nodes(); output_counter++)
-	{
-		std::cout << "Output " << output_counter << ": " << output_nodes.at(output_counter)->get_value() << std::endl;
-	}
 	unsigned int selected = this->get_selected();
 	for(unsigned int output_counter = 0; output_counter < this->get_number_of_output_nodes(); output_counter++)
 	{
@@ -455,18 +503,14 @@ void ai::check_output()
 			double error_margin_comp;
 			error_margin_comp = (1 - output_nodes.at(output_counter)->get_value());
 			error_margin += error_margin_comp;
-			std::cout << "Node: " << output_counter << " error margin " << error_margin_comp << std::endl;
-			error_margin += error_margin_comp;
 		}
 		else 
 		{
 			double error_margin_comp;
 			error_margin_comp = ((output_nodes.at(output_counter)->get_value()));
-			std::cout << "Node: " << output_counter << " error margin " << error_margin_comp << std::endl;
 			error_margin += error_margin_comp;
 		}
 	}
-	std::cout << "ERROR MARGIN: " << error_margin << std::endl;
 }
 
 double ai::get_error_margin() const
@@ -476,9 +520,4 @@ double ai::get_error_margin() const
 void ai::clear_error_margin()
 {
 	this->error_margin = 0;
-}
-
-bool ai::operator <(ai &bots)
-{
-	return (this->error_margin < bots.get_error_margin());
 }

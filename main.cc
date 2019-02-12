@@ -1,4 +1,4 @@
-#include "ai.h"
+#include "ai_manager.h"
 #include <iostream>
 void display_main_menu();
 void display_view_node_menu();
@@ -6,7 +6,70 @@ void display_set_node_menu();
 int main()
 {
 	srand(time(NULL));
+	unsigned const int NUMBER_OF_BOTS = 100;
+	unsigned const int NUMBER_OF_INPUT_NODES = 12;
+	unsigned const int NUMBER_OF_HIDDEN_LAYERS = 1;
+	unsigned const int NUMBER_OF_HIDDEN_NODES = 35; //This should be a vector
+	unsigned const int NUMBER_OF_OUTPUT_NODES = 2;
+	unsigned const int STEP_SIZE = 1;
+	unsigned const int BOTS_TO_REPLACE = 25;
+	unsigned const int BOTS_TO_BREED = BOTS_TO_REPLACE * 2;
+
 	ai testBot;
+	ai_manager bot_manager;
+	ai * tmp;
+	bot_manager.set_number_of_bots(NUMBER_OF_BOTS);
+	for(unsigned int counter = 0; counter < NUMBER_OF_BOTS; counter++)
+	{
+		tmp = bot_manager.get_bot(counter);
+		tmp->set_number_of_input_nodes(NUMBER_OF_INPUT_NODES);
+		tmp->set_number_of_hidden_layers(NUMBER_OF_HIDDEN_LAYERS);
+		tmp->set_number_of_hidden_nodes(0, NUMBER_OF_HIDDEN_NODES);
+		tmp->set_number_of_output_nodes(NUMBER_OF_OUTPUT_NODES);
+	}
+	for(unsigned int step_counter = 1; step_counter <= STEP_SIZE; step_counter++)
+		{
+
+			for(unsigned int counter = 0; counter < NUMBER_OF_BOTS; counter++)
+			{
+				tmp = bot_manager.get_bot(counter);
+				tmp->get_input();
+				tmp->push_input();
+				tmp->check_output();
+			}
+			
+			if(step_counter % STEP_SIZE == 0)
+			{
+				bot_manager.sort_bots();
+
+				for(unsigned int counter = 0; counter < NUMBER_OF_BOTS; counter++)
+				{
+					tmp = bot_manager.get_bot(counter);
+					for(unsigned int output_counter = 0; output_counter < tmp->get_number_of_output_nodes(); output_counter++)
+					{
+						std::cout << "Bot " << counter << " Node " << output_counter << " Confidence Level: " << tmp->get_output_value(output_counter) << std::endl;
+					}
+					std::cout << "Bot " << counter << " Error Margin: " << tmp->get_error_margin() << std::endl;
+				}
+
+				for(unsigned int counter = 0; counter < BOTS_TO_BREED; counter += 2)
+				{
+					ai * tmp;
+					tmp = new ai;
+					ai * father = bot_manager.get_bot(counter);
+					ai * mother = bot_manager.get_bot(counter+1);
+					tmp = bot_manager.breed(father, mother);
+					bot_manager.kill_bot((NUMBER_OF_BOTS-1) - (counter / 2));
+					bot_manager.set_bot((NUMBER_OF_BOTS-1) - (counter / 2), tmp);
+				}
+				for(unsigned int counter = 0; counter < BOTS_TO_BREED; counter++)
+				{
+					bot_manager.get_bot(counter)->clear_error_margin();
+				}
+				step_counter = 0;
+			}
+		}
+	/*
 	int user_input;
 	while(1) {
 		do
@@ -107,7 +170,7 @@ int main()
 				testBot.check_output();
 				break;
 		}
-	}
+	} */
 	return 0;
 }
 void display_main_menu() 

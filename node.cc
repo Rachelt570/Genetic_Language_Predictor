@@ -22,7 +22,14 @@ void node::set_value(double new_value)
 	this->value = new_value;
 	return;
 }
-
+void node::set_bias(double new_bias)
+{
+	this->bias = new_bias;
+}
+double node::get_bias() const
+{
+	return this->bias;
+}
 void node::add_value(double new_value_component)
 {
 	this->value_component += new_value_component;
